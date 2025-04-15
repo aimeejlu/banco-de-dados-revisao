@@ -5,34 +5,50 @@
 ### 1. Criação do Banco de Dados
 
 ```sql
--- Criação do banco de dados
--- 1ª Digitação (Início das respostas)
-
--- Seleciona o banco de dados
+CREATE DATABASE IF NOT EXISTS eventos_db;
+USE eventos_db;
 
 ```
 
 ### 2. Criação das Tabelas
 
 ```sql
--- Tabela de palestrantes
+-- Tabela Palestrantes
+CREATE TABLE Palestrantes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    especialidade VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE
+);
 
+-- Tabela Eventos
+CREATE TABLE Eventos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    data_evento DATE NOT NULL,
+    local VARCHAR(255) NOT NULL,
+    capacidade INT NOT NULL DEFAULT 50,
+    palestrante_id INT NOT NULL,
+    FOREIGN KEY (palestrante_id) REFERENCES Palestrantes(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
 
+-- Tabela Inscricoes
+CREATE TABLE Inscricoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    evento_id INT NOT NULL,
+    nome_participante VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    data_inscricao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    presente BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (evento_id) REFERENCES Eventos(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
 
-
-
-
--- Tabela de eventos
-
-
-
-
-
-
-
--- Tabela de inscrições
-
-
+-- Índice para evitar inscrições duplicadas no mesmo evento pelo mesmo email (opcional)
+CREATE UNIQUE INDEX idx_evento_email ON Inscricoes(evento_id, email);
 
 
 
